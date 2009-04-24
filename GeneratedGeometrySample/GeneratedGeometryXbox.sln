@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{00000000-0000-0000-0000-000000000000}") = "GeneratedGeometryXbox", "GeneratedGeometry\GeneratedGeometryXbox.csproj", "{2DB64B39-C7A5-42A2-A8F5-3194DFBF9449}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneratedGeometryPipeline", "GeneratedGeometryPipeline\GeneratedGeometryPipeline.csproj", "{96B02956-4EB9-4AA1-972D-A211507EFC85}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Xbox 360 = Debug|Xbox 360
+		Release|Xbox 360 = Release|Xbox 360
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2DB64B39-C7A5-42A2-A8F5-3194DFBF9449}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{2DB64B39-C7A5-42A2-A8F5-3194DFBF9449}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{2DB64B39-C7A5-42A2-A8F5-3194DFBF9449}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
+		{2DB64B39-C7A5-42A2-A8F5-3194DFBF9449}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{2DB64B39-C7A5-42A2-A8F5-3194DFBF9449}.Release|Xbox 360.Build.0 = Release|Xbox 360
+		{2DB64B39-C7A5-42A2-A8F5-3194DFBF9449}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
+		{96B02956-4EB9-4AA1-972D-A211507EFC85}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{96B02956-4EB9-4AA1-972D-A211507EFC85}.Debug|Xbox 360.Build.0 = Debug|x86
+		{96B02956-4EB9-4AA1-972D-A211507EFC85}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{96B02956-4EB9-4AA1-972D-A211507EFC85}.Release|Xbox 360.Build.0 = Release|Xbox 360
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
