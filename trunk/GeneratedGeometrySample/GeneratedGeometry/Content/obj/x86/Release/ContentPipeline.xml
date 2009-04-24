@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Pipeline="Microsoft.Xna.Framework.Content.Pipeline" xmlns:Graphics="Microsoft.Xna.Framework.Graphics" xmlns:Processors="Microsoft.Xna.Framework.Content.Pipeline.Processors">
+  <Asset Type="Pipeline:BuildItemCollection">
+    <Item>
+      <Source>sky.bmp</Source>
+      <Name>sky</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>SkyProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\sky.xnb</Output>
+      <Time>2008-10-27T09:13:08+01:00</Time>
+      <Request>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\sky_0.xnb</Request>
+    </Item>
+    <Item>
+      <Source>terrain.bmp</Source>
+      <Name>terrain</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TerrainProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\terrain.xnb</Output>
+      <Time>2008-10-27T09:13:08+01:00</Time>
+      <Request>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\rocks_0.xnb</Request>
+    </Item>
+    <Item>
+      <Source>Effects\LightScatterPostProcess.fx</Source>
+      <Name>Effects\LightScatterPostProcess</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\Effects\LightScatterPostProcess.xnb</Output>
+      <Time>2009-04-24T16:00:08.68+02:00</Time>
+    </Item>
+    <Item>
+      <Source>sky.fx</Source>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\sky_0.xnb</Output>
+      <Time>2008-10-27T09:13:08+01:00</Time>
+    </Item>
+    <Item>
+      <Source>rocks.bmp</Source>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Parameters>
+        <Data Key="ColorKeyColor" Type="Graphics:Color">FFFF00FF</Data>
+        <Data Key="ColorKeyEnabled" Type="bool">true</Data>
+        <Data Key="TextureFormat" Type="Processors:TextureProcessorOutputFormat">DxtCompressed</Data>
+        <Data Key="GenerateMipmaps" Type="bool">true</Data>
+        <Data Key="ResizeToPowerOfTwo" Type="bool">false</Data>
+      </Parameters>
+      <Options>None</Options>
+      <Output>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\rocks_0.xnb</Output>
+      <Time>2008-10-27T09:13:08+01:00</Time>
+    </Item>
+    <BuildSuccessful>true</BuildSuccessful>
+    <Settings>
+      <TargetPlatform>Windows</TargetPlatform>
+      <BuildConfiguration>Release</BuildConfiguration>
+      <CompressContent>true</CompressContent>
+      <RootDirectory>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\Content\</RootDirectory>
+      <LoggerRootDirectory>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\Content\obj\x86\Release\</IntermediateDirectory>
+      <OutputDirectory>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\</OutputDirectory>
+    </Settings>
+    <Assemblies>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</Key>
+        <Value>2008-10-10T18:42:32+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.TextureImporter.dll</Key>
+        <Value>2008-10-10T18:43:28+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.FBXImporter.dll</Key>
+        <Value>2008-10-10T18:43:18+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll</Key>
+        <Value>2008-10-10T18:48:18+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.AudioImporters.dll</Key>
+        <Value>2008-10-10T18:48:50+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometryPipeline\bin\x86\Release\GeneratedGeometryPipeline.dll</Key>
+        <Value>2009-04-25T00:19:58.0540634+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Windows\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\3.0.0.0__6d5c3888ef60e27d\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
+        <Value>2008-12-18T22:15:20.2346+01:00</Value>
+      </Assembly>
+    </Assemblies>
+  </Asset>
+</XnaContent>
