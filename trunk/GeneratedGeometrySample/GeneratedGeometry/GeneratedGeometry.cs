@@ -33,6 +33,7 @@ namespace GeneratedGeometry
 
         private Vector3 cameraPosition = Vector3.Zero;
         private Vector3 cameraFront = Vector3.Forward;
+        private Matrix projection;
 
         private Effect lightScatterPostProcess;
         private RenderTarget2D sceneRenderTarget, lightScatterRenderTarget;
@@ -75,7 +76,42 @@ namespace GeneratedGeometry
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Calculate the projection matrix.
+            Viewport viewport = GraphicsDevice.Viewport;
+
+            float aspectRatio = (float)viewport.Width / (float)viewport.Height;
+
+            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4,
+                                                                    aspectRatio,
+                                                                    1, 10000);
+
             terrain = Content.Load<Model>("terrain");
+
+            foreach (ModelMesh mesh in terrain.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.Projection = projection;
+
+                    effect.PreferPerPixelLighting = true;
+
+                    // Set the specular lighting to match the sky color.
+                    effect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
+                    effect.SpecularPower = 8;
+
+                    // Set the fog to match the distant mountains
+                    // that are drawn into the sky texture.
+                    effect.FogEnabled = true;
+                    effect.FogColor = new Vector3(0.15f);
+                    effect.FogStart = 100;
+                    effect.FogEnd = 320;
+
+                    effect.EnableDefaultLighting();
+                }
+            }
+
+
+
             sky = Content.Load<Sky>("sky");
 
             backbufferWidth = graphics.PreferredBackBufferWidth;
@@ -91,9 +127,11 @@ namespace GeneratedGeometry
 
             //Render targets
             sceneRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth, backbufferHeight,
-                1, SurfaceFormat.Color, MultiSampleType.None, 0);
+                1, SurfaceFormat.Color, GraphicsDevice.PresentationParameters.MultiSampleType,
+                GraphicsDevice.PresentationParameters.MultiSampleQuality);
             lightScatterRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth / 4, backbufferHeight / 4,
-                1, SurfaceFormat.Color, MultiSampleType.None, 0);
+                1, SurfaceFormat.Color, GraphicsDevice.PresentationParameters.MultiSampleType,
+                GraphicsDevice.PresentationParameters.MultiSampleQuality);
         }
 
         /// <summary>
@@ -117,7 +155,6 @@ namespace GeneratedGeometry
 
         #region Update and Draw
 
-
         /// <summary>
         /// Allows the game to run logic.
         /// </summary>
@@ -134,19 +171,9 @@ namespace GeneratedGeometry
         /// </summary>
         protected override void Draw(GameTime gameTime)
         {
+            //GraphicsDevice.SetRenderTarget(0, sceneRenderTarget);
             GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1f, 0);
-
-            GraphicsDevice.SetRenderTarget(0, sceneRenderTarget);
-            GraphicsDevice.Clear(ClearOptions.Target, new Color(0.1f, 0.1f, 0.1f, 1f), 1f, 0);
-
-            // Calculate the projection matrix.
-            Viewport viewport = GraphicsDevice.Viewport;
-
-            float aspectRatio = (float)viewport.Width / (float)viewport.Height;
-
-            Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4,
-                                                                    aspectRatio,
-                                                                    1, 10000);
+            //GraphicsDevice.Clear(ClearOptions.Target, new Color(0.1f, 0.1f, 0.1f, 1f), 1f, 0);
 
             /*
              // Calculate a view matrix, moving the camera around a circle.
@@ -171,20 +198,26 @@ namespace GeneratedGeometry
             // the sky forces all the sky vertices to be as far away as
             // possible, and turns depth testing on but depth writes off.
 
-            GraphicsDevice.RenderState.DepthBufferEnable = true;
+            //GraphicsDevice.RenderState.DepthBufferEnable = true;
 
+            GraphicsDevice.SetRenderTarget(0, sceneRenderTarget);
+            GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 1f, 0);
+            GraphicsDevice.RenderState.AlphaBlendEnable = true;
+            GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
             DrawTerrain(view, projection);
 
+            GraphicsDevice.RenderState.AlphaBlendEnable = false;
+            GraphicsDevice.RenderState.SourceBlend = Blend.One;
             sky.Draw(view, projection);
-
-            // If there was any alpha blended translucent geometry in
-            // the scene, that would be drawn here, after the sky.
 
             GraphicsDevice.SetRenderTarget(0, null);
 
             DrawLightScattering();
 
-            DrawQuad(sceneRenderTarget.GetTexture(), null, backbufferWidth, backbufferHeight, null);
+            DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
+                SpriteBlendMode.None, new Color(0.5f, 0.5f, 0.5f));
+
+            DrawTerrain(view, projection);
 
             DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
                 SpriteBlendMode.Additive, Color.White);
@@ -203,20 +236,6 @@ namespace GeneratedGeometry
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.View = view;
-                    effect.Projection = projection;
-
-                    effect.EnableDefaultLighting();
-
-                    // Set the specular lighting to match the sky color.
-                    effect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
-                    effect.SpecularPower = 8;
-
-                    // Set the fog to match the distant mountains
-                    // that are drawn into the sky texture.
-                    effect.FogEnabled = true;
-                    effect.FogColor = new Vector3(0.15f);
-                    effect.FogStart = 100;
-                    effect.FogEnd = 320;
                 }
 
                 mesh.Draw();
@@ -226,9 +245,6 @@ namespace GeneratedGeometry
         #region Draw Light Scattering
         private void DrawLightScattering()
         {
-            //GraphicsDevice.SetRenderTarget(0, lightScatterRenderTarget);
-
-            //GraphicsDevice.Textures[0] = sceneRenderTarget.GetTexture();
             Vector2 lightPos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             lightPos.X = (lightPos.X / backbufferWidth);
             lightPos.Y = (lightPos.Y / backbufferHeight);
@@ -248,7 +264,7 @@ namespace GeneratedGeometry
             // Draw a fullscreen sprite to apply the postprocessing effect.
             spriteBatch.Begin(spriteBlendMode,
                               SpriteSortMode.Immediate,
-                              SaveStateMode.None);
+                              SaveStateMode.SaveState);
 
             spriteBatch.Draw(source, new Rectangle(x, y, width, height), color);
 
@@ -267,7 +283,7 @@ namespace GeneratedGeometry
             // Draw a fullscreen sprite to apply the postprocessing effect.
             spriteBatch.Begin(spriteBlendMode,
                               SpriteSortMode.Immediate,
-                              SaveStateMode.None);
+                              SaveStateMode.SaveState);
 
             if (effect != null)
             {
