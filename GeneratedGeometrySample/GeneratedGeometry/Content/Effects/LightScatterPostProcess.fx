@@ -1,4 +1,4 @@
-#define NUM_SAMPLES 64
+#define NUM_SAMPLES 28
 
 uniform float2		ScreenLightPos;
 uniform half		Density;
@@ -40,6 +40,6 @@ technique LightScatter
 {
     pass Pass1
     {
-        PixelShader = compile ps_3_0 LightScatterPS();
+        PixelShader = compile ps_2_a LightScatterPS();
     }
 }
