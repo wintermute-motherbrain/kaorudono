@@ -49,6 +49,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\LTrees-source-2.0a\LTreesPipeline\LTreesPipeline.csproj">
+      <Project>{199AA449-800E-4908-BF49-778990A2983A}</Project>
+      <Name>LTreesPipeline</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\GeneratedGeometryPipeline\GeneratedGeometryPipeline.csproj">
       <Project>{96B02956-4EB9-4AA1-972D-A211507EFC85}</Project>
       <Name>GeneratedGeometryPipeline</Name>
@@ -59,6 +63,85 @@
       <Name>LightScatterPostProcess</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\BirchBark.png">
+      <Name>BirchBark</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\BirchLeaf.png">
+      <Name>BirchLeaf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Grass.jpg">
+      <Name>Grass</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\GrayBark.JPG">
+      <Name>GrayBark</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\GraywoodLeaf.png">
+      <Name>GraywoodLeaf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\OakLeaf.png">
+      <Name>OakLeaf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\PineBark.png">
+      <Name>PineBark</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\PineLeaf.png">
+      <Name>PineLeaf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\WillowLeaf.png">
+      <Name>WillowLeaf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Trees\Birch.ltree">
+      <Name>Birch</Name>
+      <Importer>TreeGeneratorImporter</Importer>
+      <Processor>TreeProfileProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Gardenwood.ltree">
+      <Name>Gardenwood</Name>
+      <Importer>TreeGeneratorImporter</Importer>
+      <Processor>TreeProfileProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Graywood.ltree">
+      <Name>Graywood</Name>
+      <Importer>TreeGeneratorImporter</Importer>
+      <Processor>TreeProfileProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Pine.ltree">
+      <Name>Pine</Name>
+      <Importer>TreeGeneratorImporter</Importer>
+      <Processor>TreeProfileProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Rug.ltree">
+      <Name>Rug</Name>
+      <Importer>TreeGeneratorImporter</Importer>
+      <Processor>TreeProfileProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Willow.ltree">
+      <Name>Willow</Name>
+      <Importer>TreeGeneratorImporter</Importer>
+      <Processor>TreeProfileProcessor</Processor>
     </Compile>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
