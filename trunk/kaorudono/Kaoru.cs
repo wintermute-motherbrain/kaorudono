@@ -73,10 +73,10 @@ namespace kaorudono
             lightScatterPostProcess = Content.Load<Effect>("Effects/LightScatterPostProcess");
 
             //Setup post-process parameters
-            lightScatterPostProcess.Parameters["Density"].SetValue(0.7f);
-            lightScatterPostProcess.Parameters["Weight"].SetValue(1f / 64f * 2);
+            lightScatterPostProcess.Parameters["Density"].SetValue(0.9f);
+            lightScatterPostProcess.Parameters["Weight"].SetValue(1f / 28f * 2);
             lightScatterPostProcess.Parameters["Decay"].SetValue(0.99f);
-            lightScatterPostProcess.Parameters["Exposure"].SetValue(0.3f);
+            lightScatterPostProcess.Parameters["Exposure"].SetValue(0.4f);
 
             //Render targets
             sceneRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth, backbufferHeight,

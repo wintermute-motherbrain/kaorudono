@@ -1,1 +1,2 @@
 C:\Users\Agiel\Documents\Programming\C#\GeneratedGeometrySample\GeneratedGeometry\Content\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Documents and Settings\Jonas Andersson\Skrivbord\Advanced Computer Graphics\Kaoru-dono\GeneratedGeometrySample\GeneratedGeometry\Content\obj\x86\Release\ResolveAssemblyReference.cache

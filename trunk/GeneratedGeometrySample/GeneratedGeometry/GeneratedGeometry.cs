@@ -9,10 +9,14 @@
 
 #region Using Statements
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using LTreesLibrary;
+using LTreesLibrary.Trees;
 #endregion
 
 namespace GeneratedGeometry
@@ -37,6 +41,9 @@ namespace GeneratedGeometry
 
         private Effect lightScatterPostProcess;
         private RenderTarget2D sceneRenderTarget, lightScatterRenderTarget;
+
+        private TreeProfile treeProfile;
+        private LinkedList<SimpleTree> trees;
 
         private int backbufferWidth, backbufferHeight;
 
@@ -110,8 +117,6 @@ namespace GeneratedGeometry
                 }
             }
 
-
-
             sky = Content.Load<Sky>("sky");
 
             backbufferWidth = graphics.PreferredBackBufferWidth;
@@ -124,6 +129,11 @@ namespace GeneratedGeometry
             lightScatterPostProcess.Parameters["Weight"].SetValue(1f / 64f * 2);
             lightScatterPostProcess.Parameters["Decay"].SetValue(0.99f);
             lightScatterPostProcess.Parameters["Exposure"].SetValue(0.3f);
+
+            //Trees
+            treeProfile = Content.Load<TreeProfile>("Trees/Graywood");
+            trees = new LinkedList<SimpleTree>();
+            trees.AddLast(treeProfile.GenerateSimpleTree());
 
             //Render targets
             sceneRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth, backbufferHeight,
@@ -189,6 +199,8 @@ namespace GeneratedGeometry
             Matrix view = Matrix.CreateLookAt(cameraPosition,
                                               cameraPosition + cameraFront,
                                               Vector3.Up);
+
+            Matrix treeScale = Matrix.CreateScale(0.01f);
             
 
             // Draw the terrain first, then the sky. This is faster than
@@ -202,13 +214,27 @@ namespace GeneratedGeometry
 
             GraphicsDevice.SetRenderTarget(0, sceneRenderTarget);
             GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 1f, 0);
+            GraphicsDevice.RenderState.AlphaTestEnable = false;
+            GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
             GraphicsDevice.RenderState.AlphaBlendEnable = true;
             GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
+            GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
+
             DrawTerrain(view, projection);
+            trees.First.Value.DrawTrunk(treeScale, view, projection);
 
             GraphicsDevice.RenderState.AlphaBlendEnable = false;
             GraphicsDevice.RenderState.SourceBlend = Blend.One;
             sky.Draw(view, projection);
+
+            GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
+            trees.First.Value.DrawLeaves(treeScale, view, projection);
+            
+            GraphicsDevice.RenderState.AlphaTestEnable = false;
+            GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
+
+            GraphicsDevice.RenderState.SourceBlend = Blend.One;
+            GraphicsDevice.RenderState.DestinationBlend = Blend.Zero;
 
             GraphicsDevice.SetRenderTarget(0, null);
 
@@ -218,9 +244,19 @@ namespace GeneratedGeometry
                 SpriteBlendMode.None, new Color(0.5f, 0.5f, 0.5f));
 
             DrawTerrain(view, projection);
+            trees.First.Value.DrawTrunk(treeScale, view, projection);
+            trees.First.Value.DrawLeaves(treeScale, view, projection);
+
+            GraphicsDevice.RenderState.AlphaTestEnable = false;
+            GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
+            GraphicsDevice.RenderState.SourceBlend = Blend.One;
+            GraphicsDevice.RenderState.DestinationBlend = Blend.Zero;
 
             DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
                 SpriteBlendMode.Additive, Color.White);
+
+            DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, 256, 256,
+                SpriteBlendMode.None, new Color(1f, 1f, 1f));
 
             base.Draw(gameTime);
         }
