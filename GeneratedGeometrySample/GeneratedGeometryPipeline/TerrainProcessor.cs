@@ -28,7 +28,7 @@ namespace GeneratedGeometryPipeline
         const float terrainScale = 3;
         const float terrainBumpiness = 64;
         const float texCoordScale = 0.1f;
-        const string terrainTexture = "rocks.bmp";
+        const string terrainTexture = "Grass.jpg";
 
 
         /// <summary>
