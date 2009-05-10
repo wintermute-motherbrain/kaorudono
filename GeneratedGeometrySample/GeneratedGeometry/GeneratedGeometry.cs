@@ -21,6 +21,20 @@ using LTreesLibrary.Trees;
 
 namespace GeneratedGeometry
 {
+    #region Tree
+    public struct Tree
+    {
+        public SimpleTree simpleTree;
+        public Matrix transformationMatrix;
+
+        public Tree(SimpleTree simpleTree, Matrix transformationMatrix)
+        {
+            this.simpleTree = simpleTree;
+            this.transformationMatrix = transformationMatrix;
+        }
+    }
+    #endregion
+
     /// <summary>
     /// Sample showing how to use geometry that is programatically
     /// generated as part of the content pipeline build process.
@@ -29,10 +43,17 @@ namespace GeneratedGeometry
     {
         #region Fields
 
+        const float terrainScale = 3;
+        const float terrainBumpiness = 64;
+        //const float texCoordScale = 0.1f;
+
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
         private Model terrain;
+        private Texture2D heightmap;
+        private float[,] heightValues;
+        private float terrainWidth, terrainHeight;
         private Sky sky;
 
         private Vector3 cameraPosition = Vector3.Zero;
@@ -43,7 +64,7 @@ namespace GeneratedGeometry
         private RenderTarget2D sceneRenderTarget, lightScatterRenderTarget;
 
         private TreeProfile treeProfile;
-        private LinkedList<SimpleTree> trees;
+        private LinkedList<Tree> trees;
 
         private int backbufferWidth, backbufferHeight;
 
@@ -51,7 +72,6 @@ namespace GeneratedGeometry
         #endregion
 
         #region Initialization
-
 
         public GeneratedGeometryGame()
         {
@@ -117,6 +137,9 @@ namespace GeneratedGeometry
                 }
             }
 
+            heightmap = Content.Load<Texture2D>("Textures/terrain");
+            CalculateHeightValues();
+
             sky = Content.Load<Sky>("sky");
 
             backbufferWidth = graphics.PreferredBackBufferWidth;
@@ -131,12 +154,27 @@ namespace GeneratedGeometry
             lightScatterPostProcess.Parameters["Exposure"].SetValue(0.3f);
 
             //Trees
+            Random r = new Random(Environment.TickCount);
             treeProfile = Content.Load<TreeProfile>("Trees/Graywood");
-            trees = new LinkedList<SimpleTree>();
-            trees.AddLast(treeProfile.GenerateSimpleTree());
+            trees = new LinkedList<Tree>();
 
-            foreach (SimpleTree tree in trees)
-                tree.LeafEffect.CurrentTechnique = tree.LeafEffect.Techniques["SetNoRenderStates"];
+            for (int i = 0; i < 300; i++)
+            {
+                SimpleTree simpleTree = treeProfile.GenerateSimpleTree();
+                simpleTree.LeafEffect.CurrentTechnique = simpleTree.LeafEffect.Techniques["SetNoRenderStates"];
+
+                int x = r.Next((int)(terrainWidth / terrainScale));
+                int z = r.Next((int)(terrainHeight / terrainScale));
+                float y = heightValues[x, z];
+
+                x *= (int)terrainScale;
+                z *= (int)terrainScale;
+
+                Vector3 position = new Vector3(x, y, z) - new Vector3(terrainWidth * 0.5f, 0f, terrainHeight * 0.5f);
+                Matrix scale = Matrix.CreateScale(Vector3.Lerp(new Vector3(0.005f), new Vector3(0.015f), (float)r.NextDouble()));
+
+                trees.AddLast(new Tree(simpleTree, scale * Matrix.CreateTranslation(position)));
+            }
 
             //Render targets
             sceneRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth, backbufferHeight,
@@ -162,6 +200,27 @@ namespace GeneratedGeometry
             {
                 lightScatterRenderTarget.Dispose();
                 lightScatterRenderTarget = null;
+            }
+        }
+        #endregion
+
+        #region Calculate Height Values
+        private void CalculateHeightValues()
+        {
+            terrainWidth = terrainScale * heightmap.Width;
+            terrainHeight = terrainScale * heightmap.Height;
+
+            heightValues = new float[heightmap.Width, heightmap.Height];
+            Color[] colorData = new Color[heightmap.Width * heightmap.Height];
+            heightmap.GetData<Color>(colorData);
+
+            // Create the terrain vertices.
+            for (int y = 0; y < heightmap.Height; y++)
+            {
+                for (int x = 0; x < heightmap.Width; x++)
+                {
+                    heightValues[x, y] = ((float)(colorData[x + y * heightmap.Width].R) / 255f - 1f) * terrainBumpiness;
+                }
             }
         }
         #endregion
@@ -203,7 +262,7 @@ namespace GeneratedGeometry
                                               cameraPosition + cameraFront,
                                               Vector3.Up);
 
-            Matrix treeScale = Matrix.CreateScale(0.01f);
+            //Matrix treeScale = Matrix.CreateScale(0.01f);
             
 
             // Draw the terrain first, then the sky. This is faster than
@@ -225,22 +284,13 @@ namespace GeneratedGeometry
 
             DrawTerrain(view, projection);
             //trees.First.Value.DrawTrunk(treeScale, view, projection);
-            DrawTreeTrunks(treeScale, view, projection, true);
+            DrawTreeTrunks(view, projection, true);
 
             GraphicsDevice.RenderState.AlphaBlendEnable = false;
             GraphicsDevice.RenderState.SourceBlend = Blend.One;
             sky.Draw(view, projection);
 
-            //GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
-            //trees.First.Value.DrawLeaves(treeScale, view, projection);
-            DrawTreeLeaves(treeScale, view, projection, true);
-
-            //GraphicsDevice.RenderState.AlphaBlendEnable = false;
-            GraphicsDevice.RenderState.AlphaTestEnable = false;
-            GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
-
-            GraphicsDevice.RenderState.SourceBlend = Blend.One;
-            GraphicsDevice.RenderState.DestinationBlend = Blend.Zero;
+            DrawTreeLeaves(view, projection, true);
 
             GraphicsDevice.SetRenderTarget(0, null);
 
@@ -250,15 +300,8 @@ namespace GeneratedGeometry
                 SpriteBlendMode.None, new Color(0.5f, 0.5f, 0.5f));
 
             DrawTerrain(view, projection);
-            //trees.First.Value.DrawTrunk(treeScale, view, projection);
-            //trees.First.Value.DrawLeaves(treeScale, view, projection);
-            DrawTreeTrunks(treeScale, view, projection, false);
-            DrawTreeLeaves(treeScale, view, projection, false);
-
-            GraphicsDevice.RenderState.AlphaTestEnable = false;
-            GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
-            GraphicsDevice.RenderState.SourceBlend = Blend.One;
-            GraphicsDevice.RenderState.DestinationBlend = Blend.Zero;
+            DrawTreeTrunks(view, projection, false);
+            DrawTreeLeaves(view, projection, false);
 
             DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
                 SpriteBlendMode.Additive, Color.White);
@@ -287,7 +330,7 @@ namespace GeneratedGeometry
         }
 
         #region Draw Trees
-        private void DrawTreeTrunks(Matrix world, Matrix view, Matrix projection, bool black)
+        private void DrawTreeTrunks(Matrix view, Matrix projection, bool black)
         {
             if (black)
             {
@@ -296,11 +339,11 @@ namespace GeneratedGeometry
             }
 
             //Draw trunks
-            foreach (SimpleTree tree in trees)
-                tree.DrawTrunk(world, view, projection);
+            foreach (Tree tree in trees)
+                tree.simpleTree.DrawTrunk(tree.transformationMatrix, view, projection);
         }
 
-        private void DrawTreeLeaves(Matrix world, Matrix view, Matrix projection, bool black)
+        private void DrawTreeLeaves(Matrix view, Matrix projection, bool black)
         {
             GraphicsDevice.RenderState.AlphaBlendEnable = true;
             GraphicsDevice.RenderState.SourceBlend = black ? Blend.Zero : Blend.SourceAlpha;
@@ -310,14 +353,20 @@ namespace GeneratedGeometry
             GraphicsDevice.RenderState.AlphaFunction = CompareFunction.GreaterEqual;
             GraphicsDevice.RenderState.ReferenceAlpha = 230;
 
-            GraphicsDevice.RenderState.DepthBufferEnable = true;
             GraphicsDevice.RenderState.DepthBufferWriteEnable = false;
 
             GraphicsDevice.RenderState.CullMode = CullMode.None;
 
             //Draw leaves
-            foreach (SimpleTree tree in trees)
-                tree.DrawLeaves(world, view, projection);
+            foreach (Tree tree in trees)
+                tree.simpleTree.DrawLeaves(tree.transformationMatrix, view, projection);
+
+            GraphicsDevice.RenderState.AlphaBlendEnable = false;
+            GraphicsDevice.RenderState.AlphaTestEnable = false;
+            GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
+            GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
+            GraphicsDevice.RenderState.SourceBlend = Blend.One;
+            GraphicsDevice.RenderState.DestinationBlend = Blend.Zero;
         }
         #endregion
 
