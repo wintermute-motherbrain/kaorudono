@@ -135,6 +135,9 @@ namespace GeneratedGeometry
             trees = new LinkedList<SimpleTree>();
             trees.AddLast(treeProfile.GenerateSimpleTree());
 
+            foreach (SimpleTree tree in trees)
+                tree.LeafEffect.CurrentTechnique = tree.LeafEffect.Techniques["SetNoRenderStates"];
+
             //Render targets
             sceneRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth, backbufferHeight,
                 1, SurfaceFormat.Color, GraphicsDevice.PresentationParameters.MultiSampleType,
@@ -221,15 +224,18 @@ namespace GeneratedGeometry
             GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
 
             DrawTerrain(view, projection);
-            trees.First.Value.DrawTrunk(treeScale, view, projection);
+            //trees.First.Value.DrawTrunk(treeScale, view, projection);
+            DrawTreeTrunks(treeScale, view, projection, true);
 
             GraphicsDevice.RenderState.AlphaBlendEnable = false;
             GraphicsDevice.RenderState.SourceBlend = Blend.One;
             sky.Draw(view, projection);
 
-            GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
-            trees.First.Value.DrawLeaves(treeScale, view, projection);
-            
+            //GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
+            //trees.First.Value.DrawLeaves(treeScale, view, projection);
+            DrawTreeLeaves(treeScale, view, projection, true);
+
+            //GraphicsDevice.RenderState.AlphaBlendEnable = false;
             GraphicsDevice.RenderState.AlphaTestEnable = false;
             GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
 
@@ -244,8 +250,10 @@ namespace GeneratedGeometry
                 SpriteBlendMode.None, new Color(0.5f, 0.5f, 0.5f));
 
             DrawTerrain(view, projection);
-            trees.First.Value.DrawTrunk(treeScale, view, projection);
-            trees.First.Value.DrawLeaves(treeScale, view, projection);
+            //trees.First.Value.DrawTrunk(treeScale, view, projection);
+            //trees.First.Value.DrawLeaves(treeScale, view, projection);
+            DrawTreeTrunks(treeScale, view, projection, false);
+            DrawTreeLeaves(treeScale, view, projection, false);
 
             GraphicsDevice.RenderState.AlphaTestEnable = false;
             GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
@@ -255,8 +263,8 @@ namespace GeneratedGeometry
             DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
                 SpriteBlendMode.Additive, Color.White);
 
-            DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, 256, 256,
-                SpriteBlendMode.None, new Color(1f, 1f, 1f));
+            //DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, 512, 512,
+            //    SpriteBlendMode.None, new Color(1f, 1f, 1f));
 
             base.Draw(gameTime);
         }
@@ -277,6 +285,41 @@ namespace GeneratedGeometry
                 mesh.Draw();
             }
         }
+
+        #region Draw Trees
+        private void DrawTreeTrunks(Matrix world, Matrix view, Matrix projection, bool black)
+        {
+            if (black)
+            {
+                GraphicsDevice.RenderState.AlphaBlendEnable = true;
+                GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
+            }
+
+            //Draw trunks
+            foreach (SimpleTree tree in trees)
+                tree.DrawTrunk(world, view, projection);
+        }
+
+        private void DrawTreeLeaves(Matrix world, Matrix view, Matrix projection, bool black)
+        {
+            GraphicsDevice.RenderState.AlphaBlendEnable = true;
+            GraphicsDevice.RenderState.SourceBlend = black ? Blend.Zero : Blend.SourceAlpha;
+            GraphicsDevice.RenderState.DestinationBlend = black ? Blend.InverseSourceAlpha : Blend.InverseSourceAlpha;
+
+            GraphicsDevice.RenderState.AlphaTestEnable = true;
+            GraphicsDevice.RenderState.AlphaFunction = CompareFunction.GreaterEqual;
+            GraphicsDevice.RenderState.ReferenceAlpha = 230;
+
+            GraphicsDevice.RenderState.DepthBufferEnable = true;
+            GraphicsDevice.RenderState.DepthBufferWriteEnable = false;
+
+            GraphicsDevice.RenderState.CullMode = CullMode.None;
+
+            //Draw leaves
+            foreach (SimpleTree tree in trees)
+                tree.DrawLeaves(world, view, projection);
+        }
+        #endregion
 
         #region Draw Light Scattering
         private void DrawLightScattering()
