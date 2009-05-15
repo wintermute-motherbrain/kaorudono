@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using LTreesLibrary;
 using LTreesLibrary.Trees;
+using LTreesLibrary.Trees.Wind;
 #endregion
 
 namespace GeneratedGeometry
@@ -55,6 +56,10 @@ namespace GeneratedGeometry
         private float[,] heightValues;
         private float terrainWidth, terrainHeight;
         private Sky sky;
+        private Texture2D sunTexture;
+        private Vector3 directionToSun;
+        private Vector3 sunPosition2D;
+        const int sunSize = 128;
 
         private Vector3 cameraPosition = Vector3.Zero;
         private Vector3 cameraFront = Vector3.Forward;
@@ -63,6 +68,8 @@ namespace GeneratedGeometry
         private Effect lightScatterPostProcess;
         private RenderTarget2D sceneRenderTarget, lightScatterRenderTarget;
 
+        private WindStrengthSin wind;
+        private TreeWindAnimator windAnimator;
         private TreeProfile treeProfile;
         private LinkedList<Tree> trees;
 
@@ -80,6 +87,7 @@ namespace GeneratedGeometry
 
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
+            graphics.PreferMultiSampling = true;
         }
 
         /// <summary>
@@ -113,6 +121,8 @@ namespace GeneratedGeometry
                                                                     1, 10000);
 
             terrain = Content.Load<Model>("terrain");
+            BasicDirectionalLight terrainDirectionalLight = null;
+            directionToSun = Vector3.Normalize(new Vector3(-1f, 0.2f, -1f));
 
             foreach (ModelMesh mesh in terrain.Meshes)
             {
@@ -123,17 +133,21 @@ namespace GeneratedGeometry
                     effect.PreferPerPixelLighting = true;
 
                     // Set the specular lighting to match the sky color.
-                    effect.SpecularColor = new Vector3(0.6f, 0.4f, 0.2f);
-                    effect.SpecularPower = 8;
+                    effect.SpecularColor = new Vector3(0f);
 
                     // Set the fog to match the distant mountains
                     // that are drawn into the sky texture.
-                    effect.FogEnabled = true;
+                    effect.FogEnabled = false;
                     effect.FogColor = new Vector3(0.15f);
                     effect.FogStart = 100;
                     effect.FogEnd = 320;
 
                     effect.EnableDefaultLighting();
+
+                    effect.DirectionalLight1.Enabled = false;
+                    effect.DirectionalLight2.Enabled = false;
+                    effect.DirectionalLight0.Direction = -directionToSun;
+                    terrainDirectionalLight = effect.DirectionalLight0;
                 }
             }
 
@@ -141,6 +155,7 @@ namespace GeneratedGeometry
             CalculateHeightValues();
 
             sky = Content.Load<Sky>("sky");
+            sunTexture = Content.Load<Texture2D>("Textures/sun");
 
             backbufferWidth = graphics.PreferredBackBufferWidth;
             backbufferHeight = graphics.PreferredBackBufferHeight;
@@ -148,20 +163,32 @@ namespace GeneratedGeometry
             lightScatterPostProcess = Content.Load<Effect>("Effects/LightScatterPostProcess");
 
             //Setup post-process parameters
-            lightScatterPostProcess.Parameters["Density"].SetValue(0.7f);
-            lightScatterPostProcess.Parameters["Weight"].SetValue(1f / 64f * 2);
+            lightScatterPostProcess.Parameters["Density"].SetValue(0.85f);
+            lightScatterPostProcess.Parameters["Weight"].SetValue(1f / 120f * 2);
             lightScatterPostProcess.Parameters["Decay"].SetValue(0.99f);
-            lightScatterPostProcess.Parameters["Exposure"].SetValue(0.3f);
+            lightScatterPostProcess.Parameters["Exposure"].SetValue(0.5f);
 
             //Trees
             Random r = new Random(Environment.TickCount);
-            treeProfile = Content.Load<TreeProfile>("Trees/Graywood");
+            treeProfile = Content.Load<TreeProfile>("Trees/Willow");
+
+            wind = new WindStrengthSin(0.1f);
+            windAnimator = new TreeWindAnimator(wind);
+
             trees = new LinkedList<Tree>();
 
             for (int i = 0; i < 300; i++)
             {
                 SimpleTree simpleTree = treeProfile.GenerateSimpleTree();
                 simpleTree.LeafEffect.CurrentTechnique = simpleTree.LeafEffect.Techniques["SetNoRenderStates"];
+     
+                simpleTree.TrunkEffect.Parameters["DirLight0DiffuseColor"].SetValue(new Vector4(terrainDirectionalLight.DiffuseColor, 1f));
+                simpleTree.TrunkEffect.Parameters["DirLight0Direction"].SetValue(terrainDirectionalLight.Direction);
+                simpleTree.TrunkEffect.Parameters["DirLight1Enabled"].SetValue(false);
+
+                simpleTree.LeafEffect.Parameters["DirLight0DiffuseColor"].SetValue(new Vector4(terrainDirectionalLight.DiffuseColor, 1f));
+                simpleTree.LeafEffect.Parameters["DirLight0Direction"].SetValue(terrainDirectionalLight.Direction);
+                simpleTree.LeafEffect.Parameters["DirLight1Enabled"].SetValue(false);
 
                 int x = r.Next((int)(terrainWidth / terrainScale));
                 int z = r.Next((int)(terrainHeight / terrainScale));
@@ -180,7 +207,7 @@ namespace GeneratedGeometry
             sceneRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth, backbufferHeight,
                 1, SurfaceFormat.Color, GraphicsDevice.PresentationParameters.MultiSampleType,
                 GraphicsDevice.PresentationParameters.MultiSampleQuality);
-            lightScatterRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth / 4, backbufferHeight / 4,
+            lightScatterRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth, backbufferHeight,
                 1, SurfaceFormat.Color, GraphicsDevice.PresentationParameters.MultiSampleType,
                 GraphicsDevice.PresentationParameters.MultiSampleQuality);
         }
@@ -233,6 +260,8 @@ namespace GeneratedGeometry
         protected override void Update(GameTime gameTime)
         {
             HandleInput(gameTime);
+
+            wind.Update(gameTime);
             
             base.Update(gameTime);
         }
@@ -274,6 +303,18 @@ namespace GeneratedGeometry
 
             //GraphicsDevice.RenderState.DepthBufferEnable = true;
 
+            //Animate trees
+            foreach (Tree tree in trees)
+                windAnimator.Animate(tree.simpleTree.Skeleton, tree.simpleTree.AnimationState, gameTime);
+
+            Vector3 sunPosition = directionToSun * 1000000f;
+            sunPosition2D = GraphicsDevice.Viewport.Project(sunPosition, projection, view, Matrix.Identity);
+            if (Vector3.Dot(cameraFront, directionToSun) <= 0f)
+                sunPosition2D = new Vector3(-sunPosition2D.X, sunPosition2D.Y, sunPosition2D.Z);
+
+            //sunPosition2D -= (new Vector3(sunSize, sunSize, 0f) * 0.5f);
+
+
             GraphicsDevice.SetRenderTarget(0, sceneRenderTarget);
             GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 1f, 0);
             GraphicsDevice.RenderState.AlphaTestEnable = false;
@@ -281,14 +322,16 @@ namespace GeneratedGeometry
             GraphicsDevice.RenderState.AlphaBlendEnable = true;
             GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
             GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
-
-            DrawTerrain(view, projection);
-            //trees.First.Value.DrawTrunk(treeScale, view, projection);
-            DrawTreeTrunks(view, projection, true);
-
+  
             GraphicsDevice.RenderState.AlphaBlendEnable = false;
             GraphicsDevice.RenderState.SourceBlend = Blend.One;
             sky.Draw(view, projection);
+
+            DrawSun();
+
+            DrawTerrain(view, projection);
+
+            DrawTreeTrunks(view, projection, true);
 
             DrawTreeLeaves(view, projection, true);
 
@@ -328,6 +371,16 @@ namespace GeneratedGeometry
                 mesh.Draw();
             }
         }
+
+        #region Draw Sun
+        private void DrawSun()
+        {
+            if (Vector3.Dot(cameraFront, directionToSun) <= 0f)
+                return;
+
+            DrawSprite(sunTexture, (int)sunPosition2D.X - sunSize / 2, (int)sunPosition2D.Y - sunSize / 2, sunSize, sunSize, SpriteBlendMode.Additive, Color.White);
+        }
+        #endregion
 
         #region Draw Trees
         private void DrawTreeTrunks(Matrix view, Matrix projection, bool black)
@@ -373,14 +426,15 @@ namespace GeneratedGeometry
         #region Draw Light Scattering
         private void DrawLightScattering()
         {
-            Vector2 lightPos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            //Vector2 lightPos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            Vector2 lightPos = new Vector2(sunPosition2D.X, sunPosition2D.Y);
             lightPos.X = (lightPos.X / backbufferWidth);
             lightPos.Y = (lightPos.Y / backbufferHeight);
 
             lightScatterPostProcess.Parameters["ScreenLightPos"].SetValue(lightPos);
 
             DrawQuad(sceneRenderTarget.GetTexture(), lightScatterRenderTarget,
-                backbufferWidth / 4, backbufferHeight / 4, lightScatterPostProcess);
+                lightScatterRenderTarget.Width, lightScatterRenderTarget.Height, lightScatterPostProcess);
         }
         #endregion
 
