@@ -309,44 +309,64 @@ namespace GeneratedGeometry
 
             Vector3 sunPosition = directionToSun * 1000000f;
             sunPosition2D = GraphicsDevice.Viewport.Project(sunPosition, projection, view, Matrix.Identity);
-            if (Vector3.Dot(cameraFront, directionToSun) <= 0f)
-                sunPosition2D = new Vector3(-sunPosition2D.X, sunPosition2D.Y, sunPosition2D.Z);
+            //if (Vector3.Dot(cameraFront, directionToSun) <= 0f)
+            //    sunPosition2D = new Vector3(-sunPosition2D.X, sunPosition2D.Y, sunPosition2D.Z);
 
             //sunPosition2D -= (new Vector3(sunSize, sunSize, 0f) * 0.5f);
 
-            GraphicsDevice.SetRenderTarget(0, sceneRenderTarget);
-            GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 1f, 0);
+            if (Vector3.Dot(cameraFront, directionToSun) >= 0f)
+            {
+                GraphicsDevice.SetRenderTarget(0, sceneRenderTarget);
+                GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 1f, 0);
 
-            GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
-            GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
-  
-            GraphicsDevice.RenderState.AlphaBlendEnable = false;
-            GraphicsDevice.RenderState.SourceBlend = Blend.One;
+                GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
+                GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
 
-            sky.Draw(view, projection);
+                GraphicsDevice.RenderState.AlphaBlendEnable = false;
+                GraphicsDevice.RenderState.SourceBlend = Blend.One;
 
-            DrawSun();
+                sky.Draw(view, projection);
 
-            GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
-            GraphicsDevice.RenderState.AlphaBlendEnable = true;
+                DrawSun();
 
-            DrawTerrain(view, projection);
-            DrawTreeTrunks(view, projection, true);
-            DrawTreeLeaves(view, projection, true);
+                GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
+                GraphicsDevice.RenderState.AlphaBlendEnable = true;
 
-            GraphicsDevice.SetRenderTarget(0, null);
+                DrawTerrain(view, projection);
+                DrawTreeTrunks(view, projection, true);
+                DrawTreeLeaves(view, projection, true);
 
-            DrawLightScattering();
+                GraphicsDevice.SetRenderTarget(0, null);
 
-            DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
-                SpriteBlendMode.None, new Color(0.5f, 0.5f, 0.5f));
+                DrawLightScattering();
 
-            DrawTerrain(view, projection);
-            DrawTreeTrunks(view, projection, false);
-            DrawTreeLeaves(view, projection, false);
+                DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
+                    SpriteBlendMode.None, new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
-            DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
-                SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+                DrawTerrain(view, projection);
+                DrawTreeTrunks(view, projection, false);
+                DrawTreeLeaves(view, projection, false);
+
+                DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
+                    SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, Vector3.Dot(cameraFront, directionToSun) * 0.8f)); //1.0f));
+            }
+            else
+            {
+                GraphicsDevice.SetRenderTarget(0, null);
+
+                GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 1f, 0);
+
+                sky.Draw(view, projection);
+
+                DrawSun();
+
+                DrawTerrain(view, projection);
+                DrawTreeTrunks(view, projection, false);
+                DrawTreeLeaves(view, projection, false);
+            }            
+
+            //DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
+            //    SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
             //DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, 512, 512,
             //    SpriteBlendMode.None, new Color(1f, 1f, 1f));
