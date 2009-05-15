@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneratedGeometryWindows", "GeneratedGeometry\GeneratedGeometryWindows.csproj", "{1CC27BB9-AFF1-4344-BA30-BBC0977A8147}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneratedGeometryPipeline", "GeneratedGeometryPipeline\GeneratedGeometryPipeline.csproj", "{96B02956-4EB9-4AA1-972D-A211507EFC85}"
@@ -37,12 +37,6 @@ Global
 		{96B02956-4EB9-4AA1-972D-A211507EFC85}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{96B02956-4EB9-4AA1-972D-A211507EFC85}.Release|Xbox 360.Build.0 = Release|Xbox 360
 		{96B02956-4EB9-4AA1-972D-A211507EFC85}.Release|Zune.ActiveCfg = Release|Xbox 360
-		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Debug|x86.ActiveCfg = Debug|x86
-		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Debug|Xbox 360.ActiveCfg = Debug|x86
-		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Debug|Zune.ActiveCfg = Debug|x86
-		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Release|x86.ActiveCfg = Release|x86
-		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Release|Xbox 360.ActiveCfg = Release|x86
-		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Release|Zune.ActiveCfg = Release|x86
 		{199AA449-800E-4908-BF49-778990A2983A}.Debug|x86.ActiveCfg = Debug|x86
 		{199AA449-800E-4908-BF49-778990A2983A}.Debug|x86.Build.0 = Debug|x86
 		{199AA449-800E-4908-BF49-778990A2983A}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
@@ -69,6 +63,12 @@ Global
 		{AD2A5284-A291-4F88-B06C-E32F0D39BB78}.Release|x86.ActiveCfg = Release|x86
 		{AD2A5284-A291-4F88-B06C-E32F0D39BB78}.Release|Xbox 360.ActiveCfg = Release|x86
 		{AD2A5284-A291-4F88-B06C-E32F0D39BB78}.Release|Zune.ActiveCfg = Release|x86
+		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Debug|x86.ActiveCfg = Debug|x86
+		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Debug|Zune.ActiveCfg = Debug|x86
+		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Release|x86.ActiveCfg = Release|x86
+		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Release|Xbox 360.ActiveCfg = Release|x86
+		{BFF47E18-72F7-40D0-8EA7-F848810B0BC6}.Release|Zune.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

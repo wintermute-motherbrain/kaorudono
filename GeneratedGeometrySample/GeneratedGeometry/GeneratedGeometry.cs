@@ -59,7 +59,7 @@ namespace GeneratedGeometry
         private Texture2D sunTexture;
         private Vector3 directionToSun;
         private Vector3 sunPosition2D;
-        const int sunSize = 128;
+        const int sunSize = 96;
 
         private Vector3 cameraPosition = Vector3.Zero;
         private Vector3 cameraFront = Vector3.Forward;
@@ -314,25 +314,24 @@ namespace GeneratedGeometry
 
             //sunPosition2D -= (new Vector3(sunSize, sunSize, 0f) * 0.5f);
 
-
             GraphicsDevice.SetRenderTarget(0, sceneRenderTarget);
             GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 1f, 0);
-            GraphicsDevice.RenderState.AlphaTestEnable = false;
+
             GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
-            GraphicsDevice.RenderState.AlphaBlendEnable = true;
-            GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
             GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
   
             GraphicsDevice.RenderState.AlphaBlendEnable = false;
             GraphicsDevice.RenderState.SourceBlend = Blend.One;
+
             sky.Draw(view, projection);
 
             DrawSun();
 
+            GraphicsDevice.RenderState.SourceBlend = Blend.Zero;
+            GraphicsDevice.RenderState.AlphaBlendEnable = true;
+
             DrawTerrain(view, projection);
-
             DrawTreeTrunks(view, projection, true);
-
             DrawTreeLeaves(view, projection, true);
 
             GraphicsDevice.SetRenderTarget(0, null);
@@ -347,7 +346,7 @@ namespace GeneratedGeometry
             DrawTreeLeaves(view, projection, false);
 
             DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
-                SpriteBlendMode.Additive, Color.White);
+                SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
             //DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, 512, 512,
             //    SpriteBlendMode.None, new Color(1f, 1f, 1f));
@@ -378,7 +377,7 @@ namespace GeneratedGeometry
             if (Vector3.Dot(cameraFront, directionToSun) <= 0f)
                 return;
 
-            DrawSprite(sunTexture, (int)sunPosition2D.X - sunSize / 2, (int)sunPosition2D.Y - sunSize / 2, sunSize, sunSize, SpriteBlendMode.Additive, Color.White);
+            DrawSprite(sunTexture, (int)sunPosition2D.X - sunSize / 2, (int)sunPosition2D.Y - sunSize / 2, sunSize, sunSize, SpriteBlendMode.AlphaBlend, new Color(0.8f, 0.8f, 0.6f, 1.0f));
         }
         #endregion
 
