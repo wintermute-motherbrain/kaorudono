@@ -426,6 +426,10 @@ namespace GeneratedGeometry
         #region Draw Light Scattering
         private void DrawLightScattering()
         {
+            Viewport viewport = GraphicsDevice.Viewport;
+            Vector2 viewportSize = new Vector2(viewport.Width, viewport.Height);
+            lightScatterPostProcess.Parameters["ViewportSize"].SetValue(viewportSize);
+
             //Vector2 lightPos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             Vector2 lightPos = new Vector2(sunPosition2D.X, sunPosition2D.Y);
             lightPos.X = (lightPos.X / backbufferWidth);
