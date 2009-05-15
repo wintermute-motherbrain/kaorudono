@@ -8,6 +8,12 @@ namespace LTreesLibrary.Trees.Wind
     public class WindStrengthSin : WindSource
     {
         private int time = 0;
+        private float timeFactor = 1f;
+
+        public WindStrengthSin(float timeFactor)
+        {
+            this.timeFactor = timeFactor;
+        }
 
         public void Update(GameTime t)
         {
@@ -18,7 +24,7 @@ namespace LTreesLibrary.Trees.Wind
 
         public Vector3 GetWindStrength(Vector3 position)
         {
-            float seconds = time / 1000.0f;
+            float seconds = time / 1000.0f * timeFactor;
             return 10.0f * Vector3.Right * (float)Math.Sin(seconds * 3)
                 + 15.0f * Vector3.Backward * (float)Math.Sin(seconds * 5 + 1)
                 + 1.5f * Vector3.Backward * (float)Math.Sin(seconds * 11 + 3)
