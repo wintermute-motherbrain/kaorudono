@@ -144,9 +144,11 @@ namespace GeneratedGeometry
 
                     effect.EnableDefaultLighting();
 
+                    effect.AmbientLightColor = new Vector3(0.6f, 0.6f, 0.6f);
                     effect.DirectionalLight1.Enabled = false;
                     effect.DirectionalLight2.Enabled = false;
                     effect.DirectionalLight0.Direction = -directionToSun;
+                    effect.DiffuseColor = new Vector3(1f, 1f, 1f);
                     terrainDirectionalLight = effect.DirectionalLight0;
                 }
             }
