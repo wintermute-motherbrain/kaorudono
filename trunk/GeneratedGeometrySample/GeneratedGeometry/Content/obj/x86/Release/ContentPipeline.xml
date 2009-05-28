@@ -46,7 +46,7 @@
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
       <Output>C:\Users\Agiel\Documents\Programming\C#\kaorudono\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\Textures\Grass.xnb</Output>
-      <Time>2009-05-07T21:09:35.7676+02:00</Time>
+      <Time>2009-05-28T17:53:13.012+02:00</Time>
     </Item>
     <Item>
       <Source>Textures\GrayBark.JPG</Source>
@@ -198,7 +198,7 @@
       </Parameters>
       <Options>None</Options>
       <Output>C:\Users\Agiel\Documents\Programming\C#\kaorudono\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\Grass_0.xnb</Output>
-      <Time>2009-05-15T20:51:34.714+02:00</Time>
+      <Time>2009-05-28T18:13:43.609+02:00</Time>
     </Item>
     <Item>
       <Source>Textures\Sun.png</Source>
@@ -207,7 +207,7 @@
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
       <Output>C:\Users\Agiel\Documents\Programming\C#\kaorudono\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\Textures\Sun.xnb</Output>
-      <Time>2009-05-28T16:53:58.506+02:00</Time>
+      <Time>2009-05-28T18:04:57.88+02:00</Time>
     </Item>
     <Item>
       <Source>skybox.bmp</Source>
@@ -216,7 +216,7 @@
       <Processor>SkyProcessor</Processor>
       <Options>None</Options>
       <Output>C:\Users\Agiel\Documents\Programming\C#\kaorudono\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\skybox.xnb</Output>
-      <Time>2009-05-28T16:42:04.256+02:00</Time>
+      <Time>2009-05-28T18:35:27.833+02:00</Time>
       <Request>C:\Users\Agiel\Documents\Programming\C#\kaorudono\GeneratedGeometrySample\GeneratedGeometry\bin\x86\Release\Content\sky_0.xnb</Request>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
