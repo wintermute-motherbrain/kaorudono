@@ -59,7 +59,7 @@ namespace GeneratedGeometry
         private Texture2D sunTexture;
         private Vector3 directionToSun;
         private Vector3 sunPosition2D;
-        const int sunSize = 256;
+        const int sunSize = 128;
 
         private Vector3 cameraPosition = Vector3.Zero;
         private Vector3 cameraFront = Vector3.Forward;
@@ -122,7 +122,7 @@ namespace GeneratedGeometry
 
             terrain = Content.Load<Model>("terrain");
             BasicDirectionalLight terrainDirectionalLight = null;
-            directionToSun = Vector3.Normalize(new Vector3(2f, 0.1f, -0.7f));
+            directionToSun = Vector3.Normalize(new Vector3(2f, 0.2f, -1.0f));
 
             foreach (ModelMesh mesh in terrain.Meshes)
             {
@@ -144,7 +144,7 @@ namespace GeneratedGeometry
 
                     effect.EnableDefaultLighting();
 
-                    effect.AmbientLightColor = new Vector3(0.6f, 0.6f, 0.6f);
+                    effect.AmbientLightColor = new Vector3(0.5f, 0.5f, 0.5f);
                     effect.DirectionalLight1.Enabled = false;
                     effect.DirectionalLight2.Enabled = false;
                     effect.DirectionalLight0.Direction = -directionToSun;
@@ -165,10 +165,10 @@ namespace GeneratedGeometry
             lightScatterPostProcess = Content.Load<Effect>("Effects/LightScatterPostProcess");
 
             //Setup post-process parameters
-            lightScatterPostProcess.Parameters["Density"].SetValue(0.85f);
-            lightScatterPostProcess.Parameters["Weight"].SetValue(1f / 120f * 2);
-            lightScatterPostProcess.Parameters["Decay"].SetValue(0.99f);
-            lightScatterPostProcess.Parameters["Exposure"].SetValue(0.5f);
+            lightScatterPostProcess.Parameters["Density"].SetValue(0.95f);
+            lightScatterPostProcess.Parameters["Weight"].SetValue(1f / 120f * 1f);
+            lightScatterPostProcess.Parameters["Decay"].SetValue(0.991f);
+            lightScatterPostProcess.Parameters["Exposure"].SetValue(0.7f);
 
             //Trees
             Random r = new Random(Environment.TickCount);
@@ -345,12 +345,13 @@ namespace GeneratedGeometry
                 DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
                     SpriteBlendMode.None, new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
+                //DrawSun();
                 DrawTerrain(view, projection);
                 DrawTreeTrunks(view, projection, false);
                 DrawTreeLeaves(view, projection, false);
 
                 DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
-                    SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, (float)Math.Asin(Vector3.Dot(cameraFront, directionToSun)) * 1.0f)); //1.0f));
+                    SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, (float)Math.Asin(Vector3.Dot(cameraFront, directionToSun)) * 0.5f)); //1.0f));
             }
             else
             {
@@ -399,7 +400,7 @@ namespace GeneratedGeometry
             if (Vector3.Dot(cameraFront, directionToSun) <= 0f)
                 return;
 
-            DrawSprite(sunTexture, (int)sunPosition2D.X - sunSize / 2, (int)sunPosition2D.Y - sunSize / 2, sunSize, sunSize, SpriteBlendMode.AlphaBlend, new Color(0.8f, 0.8f, 0.6f, 0.2f));
+            DrawSprite(sunTexture, (int)sunPosition2D.X - sunSize / 2, (int)sunPosition2D.Y - sunSize / 2, sunSize, sunSize, SpriteBlendMode.AlphaBlend, new Color(0.8f, 0.8f, 0.6f, 1.0f));
         }
         #endregion
 
