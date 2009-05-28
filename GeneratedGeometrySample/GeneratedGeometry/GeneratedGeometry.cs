@@ -59,7 +59,7 @@ namespace GeneratedGeometry
         private Texture2D sunTexture;
         private Vector3 directionToSun;
         private Vector3 sunPosition2D;
-        const int sunSize = 96;
+        const int sunSize = 256;
 
         private Vector3 cameraPosition = Vector3.Zero;
         private Vector3 cameraFront = Vector3.Forward;
@@ -122,7 +122,7 @@ namespace GeneratedGeometry
 
             terrain = Content.Load<Model>("terrain");
             BasicDirectionalLight terrainDirectionalLight = null;
-            directionToSun = Vector3.Normalize(new Vector3(-1f, 0.2f, -1f));
+            directionToSun = Vector3.Normalize(new Vector3(2f, 0.1f, -0.7f));
 
             foreach (ModelMesh mesh in terrain.Meshes)
             {
@@ -154,8 +154,8 @@ namespace GeneratedGeometry
             heightmap = Content.Load<Texture2D>("Textures/terrain");
             CalculateHeightValues();
 
-            sky = Content.Load<Sky>("sky");
-            sunTexture = Content.Load<Texture2D>("Textures/sun");
+            sky = Content.Load<Sky>("skybox");
+            sunTexture = Content.Load<Texture2D>("Textures/Sun");
 
             backbufferWidth = graphics.PreferredBackBufferWidth;
             backbufferHeight = graphics.PreferredBackBufferHeight;
@@ -348,7 +348,7 @@ namespace GeneratedGeometry
                 DrawTreeLeaves(view, projection, false);
 
                 DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
-                    SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, Vector3.Dot(cameraFront, directionToSun) * 0.8f)); //1.0f));
+                    SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, (float)Math.Asin(Vector3.Dot(cameraFront, directionToSun)) * 1.0f)); //1.0f));
             }
             else
             {
@@ -397,7 +397,7 @@ namespace GeneratedGeometry
             if (Vector3.Dot(cameraFront, directionToSun) <= 0f)
                 return;
 
-            DrawSprite(sunTexture, (int)sunPosition2D.X - sunSize / 2, (int)sunPosition2D.Y - sunSize / 2, sunSize, sunSize, SpriteBlendMode.AlphaBlend, new Color(0.8f, 0.8f, 0.6f, 1.0f));
+            DrawSprite(sunTexture, (int)sunPosition2D.X - sunSize / 2, (int)sunPosition2D.Y - sunSize / 2, sunSize, sunSize, SpriteBlendMode.AlphaBlend, new Color(0.8f, 0.8f, 0.6f, 0.2f));
         }
         #endregion
 
