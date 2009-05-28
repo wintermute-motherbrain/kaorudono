@@ -88,6 +88,8 @@ namespace GeneratedGeometry
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
             graphics.PreferMultiSampling = true;
+
+            Window.Title = "Volumetric Light Scattering as a Post-Process";
         }
 
         /// <summary>
@@ -166,9 +168,9 @@ namespace GeneratedGeometry
 
             //Setup post-process parameters
             lightScatterPostProcess.Parameters["Density"].SetValue(0.95f);
-            lightScatterPostProcess.Parameters["Weight"].SetValue(1f / 120f * 1f);
+            lightScatterPostProcess.Parameters["Weight"].SetValue(1f / 120f * 1.2f);
             lightScatterPostProcess.Parameters["Decay"].SetValue(0.991f);
-            lightScatterPostProcess.Parameters["Exposure"].SetValue(0.7f);
+            lightScatterPostProcess.Parameters["Exposure"].SetValue(0.5f);
 
             //Trees
             Random r = new Random(Environment.TickCount);
@@ -351,7 +353,7 @@ namespace GeneratedGeometry
                 DrawTreeLeaves(view, projection, false);
 
                 DrawSprite(lightScatterRenderTarget.GetTexture(), 0, 0, backbufferWidth, backbufferHeight,
-                    SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, (float)Math.Asin(Vector3.Dot(cameraFront, directionToSun)) * 0.5f)); //1.0f));
+                    SpriteBlendMode.Additive, new Color(1.0f, 1.0f, 1.0f, (float)Math.Asin(Vector3.Dot(cameraFront, directionToSun)) * 0.8f)); //1.0f));
             }
             else
             {
