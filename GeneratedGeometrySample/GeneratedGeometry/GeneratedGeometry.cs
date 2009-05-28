@@ -73,6 +73,8 @@ namespace GeneratedGeometry
         private TreeProfile treeProfile;
         private LinkedList<Tree> trees;
 
+        private SpriteFont fpsFont;
+
         private int backbufferWidth, backbufferHeight;
 
 
@@ -214,6 +216,9 @@ namespace GeneratedGeometry
             lightScatterRenderTarget = new RenderTarget2D(GraphicsDevice, backbufferWidth, backbufferHeight,
                 1, SurfaceFormat.Color, GraphicsDevice.PresentationParameters.MultiSampleType,
                 GraphicsDevice.PresentationParameters.MultiSampleQuality);
+
+            //FPS
+            fpsFont = Content.Load<SpriteFont>("Fonts/Verdana");
         }
 
         /// <summary>
@@ -375,6 +380,16 @@ namespace GeneratedGeometry
 
             //DrawSprite(sceneRenderTarget.GetTexture(), 0, 0, 512, 512,
             //    SpriteBlendMode.None, new Color(1f, 1f, 1f));
+
+            //FPS
+            float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (elapsedTime == 0f)
+                elapsedTime = 1f;
+
+            String fpsString = "FPS: " + ((float)(1f / elapsedTime)).ToString("f1");
+            spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
+            spriteBatch.DrawString(fpsFont, fpsString, new Vector2(5f), new Color(1f, 0.3f, 0.3f, 1f));
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
