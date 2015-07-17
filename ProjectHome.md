@@ -1,0 +1,1 @@
+Implementation of volumetric light scattering as a post-process from GPU Gems 3 in XNA for the course Advanced Computer Graphics at Chalmers.
